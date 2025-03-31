@@ -21,4 +21,16 @@ public class StudentService {
     public Optional<Student> getStudentById(Long id) {
         return studentRepository.getById(id);
     }
+
+    public Optional<Student> addStudent(Long id, String name, int age) {
+        return studentRepository.addStudent(id, name, age);
+    }
+
+    public Optional<Student> updateStudent(Long id, String name, int age) {
+        return studentRepository.updateById(id, name, age);
+    }
+
+    public Optional<Student> deleteStudentById(Long id) {
+        return studentRepository.deleteById(id);
+    }
 }

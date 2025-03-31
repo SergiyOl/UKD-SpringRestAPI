@@ -27,4 +27,34 @@ public class StudentRepository {
                 .filter(student -> student.getId() == (id))
                 .findFirst();
     }
+
+    public Optional<Student> addStudent(Long id, String name, int age) {
+        for (Student student : students) {
+            if (student.getId().equals(id)) {
+                students.add(new Student(id, name, age));
+                return getById(id);
+            }
+        }
+        return null;
+    }
+
+    public Optional<Student> updateById(Long id, String name, int age) {
+        for (Student student : students) {
+            if (student.getId().equals(id)) {
+                student = new Student(id, name, age);
+                return getById(id);
+            }
+        }
+        return null;
+    }
+
+    public Optional<Student> deleteById(Long id) {
+        for (Student student : students) {
+            if (student.getId().equals(id)) {
+                student = null;
+            }
+        }
+        return null;
+    }
+
 }
