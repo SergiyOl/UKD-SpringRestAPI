@@ -31,17 +31,18 @@ public class StudentRepository {
     public Optional<Student> addStudent(Long id, String name, int age) {
         for (Student student : students) {
             if (student.getId().equals(id)) {
-                students.add(new Student(id, name, age));
-                return getById(id);
+                return null;
             }
         }
-        return null;
+        students.add(new Student(id, name, age));
+        return getById(id);
     }
 
     public Optional<Student> updateById(Long id, String name, int age) {
         for (Student student : students) {
             if (student.getId().equals(id)) {
-                student = new Student(id, name, age);
+                student.setName(name);
+                student.setAge(age);
                 return getById(id);
             }
         }
@@ -49,10 +50,14 @@ public class StudentRepository {
     }
 
     public Optional<Student> deleteById(Long id) {
+        Student toDelete = null;
         for (Student student : students) {
             if (student.getId().equals(id)) {
-                student = null;
+                toDelete = student;
             }
+        }
+        if (toDelete != null) {
+            students.remove(toDelete);
         }
         return null;
     }
