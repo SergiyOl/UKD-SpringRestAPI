@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springrest.rest.model.RequestStudentDTO;
 import com.springrest.rest.model.ResponceStudentDTO;
 import com.springrest.rest.model.Student;
-import com.springrest.rest.service.StudentService;
+import com.springrest.rest.service.StudentServiceImpl;
 
 @RestController
 public class HomeRestController {
-    private StudentService studentService = null;
+    private StudentServiceImpl studentService = null;
 
-    public HomeRestController(StudentService studentService) {
+    public HomeRestController(StudentServiceImpl studentService) {
         this.studentService = studentService;
     }
 
