@@ -39,7 +39,6 @@ import com.springrest.rest.controller.HomeRestController;
 import com.springrest.rest.model.Student;
 import com.springrest.rest.service.StudentServiceImpl;
 
-// import io.swagger.v3.oas.models.media.MediaType;
 import org.springframework.http.MediaType;
 
 @SpringBootTest
