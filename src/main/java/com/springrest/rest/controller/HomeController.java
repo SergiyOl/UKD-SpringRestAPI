@@ -5,14 +5,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.springrest.rest.service.StudentService;
+import com.springrest.rest.service.StudentServiceImpl;
 
 @Controller
 public class HomeController {
-    private StudentService studentService;
+    private StudentServiceImpl studentService;
 
     @Autowired
-    public HomeController(StudentService studentService) {
+    public HomeController(StudentServiceImpl studentService) {
         this.studentService = studentService;
     }
 

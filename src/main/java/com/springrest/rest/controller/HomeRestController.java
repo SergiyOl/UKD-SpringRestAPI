@@ -14,13 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springrest.rest.model.RequestStudentDTO;
 import com.springrest.rest.model.ResponceStudentDTO;
 import com.springrest.rest.model.Student;
-import com.springrest.rest.service.StudentService;
+import com.springrest.rest.service.StudentServiceImpl;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 public class HomeRestController {
-    private StudentService studentService = null;
+    private StudentServiceImpl studentService = null;
 
-    public HomeRestController(StudentService studentService) {
+    public HomeRestController(StudentServiceImpl studentService) {
         this.studentService = studentService;
     }
 
@@ -35,12 +37,13 @@ public class HomeRestController {
     }
 
     @PostMapping("/students")
-    public ResponceStudentDTO addStudent(@RequestBody RequestStudentDTO requestDTO) {
+    public ResponceStudentDTO addStudent(@RequestBody RequestStudentDTO requestDTO, HttpServletResponse response) {
         Optional<Student> responce = studentService.addStudent(requestDTO.getId(), requestDTO.getName(),
                 requestDTO.getAge());
-        if (responce != null)
+        if (responce != null) {
+            response.setStatus(HttpServletResponse.SC_CREATED);
             return (new ResponceStudentDTO(requestDTO.getId(), requestDTO.getName(), requestDTO.getAge()));
-        else
+        } else
             return null;
     }
 
@@ -55,7 +58,8 @@ public class HomeRestController {
     }
 
     @DeleteMapping("/students/")
-    public Optional<Student> deleteStudentById(@RequestParam(required = true) Long id) {
+    public Optional<Student> deleteStudentById(@RequestParam(required = true) Long id, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         return studentService.deleteStudentById(id);
     }
 }
