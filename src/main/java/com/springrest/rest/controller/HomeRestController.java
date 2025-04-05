@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.springrest.rest.exception.StudentNotFoundException;
 import com.springrest.rest.model.RequestStudentDTO;
 import com.springrest.rest.model.ResponceStudentDTO;
 import com.springrest.rest.model.Student;
@@ -38,7 +39,11 @@ public class HomeRestController {
     @GetMapping("/students/")
     public Optional<Student> getStudentById(@RequestParam(required = true) Long id) {
         logger.info("Received GET request to /students/?id=" + id);
-        return studentService.getStudentById(id);
+        Optional<Student> responce = studentService.getStudentById(id);
+        if (Optional.empty().equals(responce)) {
+            throw new StudentNotFoundException("Student with ID " + id + " not found");
+        }
+        return responce;
     }
 
     @PostMapping("/students")
@@ -46,11 +51,11 @@ public class HomeRestController {
         logger.info("Received POST request to /students");
         Optional<Student> responce = studentService.addStudent(requestDTO.getId(), requestDTO.getName(),
                 requestDTO.getAge());
-        if (responce != null) {
-            response.setStatus(HttpServletResponse.SC_CREATED);
-            return (new ResponceStudentDTO(requestDTO.getId(), requestDTO.getName(), requestDTO.getAge()));
-        } else
-            return null;
+        if (Optional.empty().equals(responce)) {
+            throw new StudentNotFoundException("Student with ID " + requestDTO.getId() + " alreary exists");
+        }
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        return (new ResponceStudentDTO(requestDTO.getId(), requestDTO.getName(), requestDTO.getAge()));
     }
 
     @PutMapping("/students")
@@ -58,10 +63,10 @@ public class HomeRestController {
         logger.info("Received PUT request to /students");
         Optional<Student> responce = studentService.updateStudent(requestDTO.getId(), requestDTO.getName(),
                 requestDTO.getAge());
-        if (responce != null)
-            return (new ResponceStudentDTO(requestDTO.getId(), requestDTO.getName(), requestDTO.getAge()));
-        else
-            return null;
+        if (Optional.empty().equals(responce)) {
+            throw new StudentNotFoundException("Student with ID " + requestDTO.getId() + " not found");
+        }
+        return (new ResponceStudentDTO(requestDTO.getId(), requestDTO.getName(), requestDTO.getAge()));
     }
 
     @DeleteMapping("/students/")
