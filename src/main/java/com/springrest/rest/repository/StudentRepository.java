@@ -31,7 +31,7 @@ public class StudentRepository {
     public Optional<Student> addStudent(Long id, String name, int age) {
         for (Student student : students) {
             if (student.getId().equals(id)) {
-                return null;
+                return Optional.empty();
             }
         }
         students.add(new Student(id, name, age));
@@ -46,7 +46,7 @@ public class StudentRepository {
                 return getById(id);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public Optional<Student> deleteById(Long id) {
@@ -59,7 +59,7 @@ public class StudentRepository {
         if (toDelete != null) {
             students.remove(toDelete);
         }
-        return null;
+        return Optional.empty();
     }
 
 }
