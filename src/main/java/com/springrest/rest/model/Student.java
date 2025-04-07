@@ -7,7 +7,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import jakarta.persistence.Entity;
 
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
