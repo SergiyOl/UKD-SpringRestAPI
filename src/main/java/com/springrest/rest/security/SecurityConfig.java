@@ -1,6 +1,6 @@
 package com.springrest.rest.security;
 
-import org.springframework.beans.factory.annotation.Value;
+// import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,14 +17,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${app.user.username}")
-    private String username;
+    // @Value("${app.user.username}")
+    // private String username;
 
-    @Value("${app.user.password}")
-    private String password;
+    // @Value("${app.user.password}")
+    // private String password;
 
-    @Value("${app.user.roles}")
-    private String roles;
+    // @Value("${app.user.roles}")
+    // private String roles;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -33,13 +33,19 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.builder()
-                .username(username)
-                .password(passwordEncoder.encode(password))
-                .roles(roles.split(","))
+        UserDetails admin = User.builder()
+                .username("admin")
+                .password(passwordEncoder.encode("admin123"))
+                .roles("USER", "ADMIN")
                 .build();
 
-        return new InMemoryUserDetailsManager(user);
+        UserDetails user = User.builder()
+                .username("user")
+                .password(passwordEncoder.encode("user123"))
+                .roles("USER")
+                .build();
+
+        return new InMemoryUserDetailsManager(admin, user);
     }
 
     @Bean
@@ -47,8 +53,10 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/home").permitAll()
                         .requestMatchers("/login").permitAll()
+                        .requestMatchers("/home").permitAll()
+                        .requestMatchers("/studentslist").hasRole("USER")
+                        .requestMatchers("/form").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin();
 
