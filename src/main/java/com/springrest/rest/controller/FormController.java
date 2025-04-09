@@ -4,17 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.springrest.rest.service.StudentServiceImpl;
-
 @Controller
-public class HomeController {
+public class FormController {
 
     @Autowired
-    public HomeController(StudentServiceImpl studentService) {
+    public FormController() {
     }
 
-    @GetMapping("/home")
-    public String showHome() {
-        return "home";
+    @GetMapping("/form")
+    public String showForm() {
+        return "form";
     }
 }
