@@ -1,52 +1,64 @@
 package com.springrest.rest.security;
 
-// import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+// import org.springframework.security.core.userdetails.User;
+// import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+// import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+// @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true,
+// jsr250Enabled = true)
 public class SecurityConfig {
 
-    // @Value("${app.user.username}")
-    // private String username;
+    @Autowired
+    private final UserDetailsService userService;
 
-    // @Value("${app.user.password}")
-    // private String password;
+    public SecurityConfig(UserDetailsService userService) {
+        this.userService = userService;
+    }
 
-    // @Value("${app.user.roles}")
-    // private String roles;
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return new ProviderManager(authProvider);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("admin123"))
-                .roles("USER", "ADMIN")
-                .build();
+    // @Bean
+    // public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder)
+    // {
+    // UserDetails admin = User.builder()
+    // .username("admin")
+    // .password(passwordEncoder.encode("admin123"))
+    // .roles("USER", "ADMIN")
+    // .build();
 
-        UserDetails user = User.builder()
-                .username("user")
-                .password(passwordEncoder.encode("user123"))
-                .roles("USER")
-                .build();
+    // UserDetails user = User.builder()
+    // .username("user")
+    // .password(passwordEncoder.encode("user123"))
+    // .roles("USER")
+    // .build();
 
-        return new InMemoryUserDetailsManager(admin, user);
-    }
+    // return new InMemoryUserDetailsManager(admin, user);
+    // }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -58,7 +70,14 @@ public class SecurityConfig {
                         .requestMatchers("/studentslist").hasRole("USER")
                         .requestMatchers("/form").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                .formLogin();
+                .formLogin(login -> login
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/home", true)
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/home")
+                        .permitAll());
 
         return http.build();
     }

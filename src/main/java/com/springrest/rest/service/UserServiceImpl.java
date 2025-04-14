@@ -6,10 +6,12 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import com.springrest.rest.entity.UserEntity;
 import com.springrest.rest.repository.UserRepository;
 
+@Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
@@ -36,8 +38,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserEntity sevaUser(UserEntity user) {
+    public UserEntity saveUser(UserEntity user) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'sevaUser'");
+        throw new UnsupportedOperationException("Unimplemented method 'saveUser'");
     }
 }

@@ -28,17 +28,17 @@ public class UserEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(unique = true, nullable = false)
-    private String name;
+    private String username;
 
     @Column(nullable = false)
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER) // Store roles as a separate table
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "roles")
+    @Column(name = "role")
     private Set<String> roles;
 
     @Override
@@ -73,7 +73,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return username;
     }
 
 }
