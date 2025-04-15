@@ -53,7 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public void registerUser(@RequestBody String username, String password) {
+    public ResponseEntity<Void> registerUser(@RequestBody String username, String password) {
         logger.info("Received Register request (username: " + username + " ; password: " + password + " )");
 
         // Створення нового користувача
@@ -65,11 +65,10 @@ public class AuthController {
         try {
             userService.saveUser(user);
             logger.info("Created User");
-            // UserEntity savedUser = userService.saveUser(user);
-            // return ResponseEntity.ok(null);
+            return ResponseEntity.status(302).header("Location", "/login").build();
         } catch (RuntimeException e) {
             logger.info("Something went wrong");
-            // return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().build();
         }
     }
 }
