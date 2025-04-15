@@ -66,6 +66,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/login").permitAll()
+                        .requestMatchers("/register").permitAll()
                         .requestMatchers("/home").permitAll()
                         .requestMatchers("/studentslist").hasRole("USER")
                         .requestMatchers("/form").hasRole("ADMIN")

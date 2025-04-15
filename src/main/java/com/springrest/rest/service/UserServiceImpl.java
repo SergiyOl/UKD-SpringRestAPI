@@ -39,7 +39,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserEntity saveUser(UserEntity user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveUser'");
+        Optional<UserEntity> existingUser = userRepository.findByUsername(user.getUsername());
+        if (existingUser.isPresent()) {
+            throw new RuntimeException("User with username " + user.getUsername() + " already exists");
+        }
+
+        return userRepository.save(user);
     }
 }

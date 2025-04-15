@@ -19,7 +19,12 @@ public class HomeController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String loginPage() {
         return "login";
+    }
+
+    @GetMapping("/register")
+    public String registerPage() {
+        return "register";
     }
 }
