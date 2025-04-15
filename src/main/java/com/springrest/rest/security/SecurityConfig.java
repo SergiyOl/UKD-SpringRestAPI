@@ -1,6 +1,9 @@
 package com.springrest.rest.security;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 // import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.springrest.rest.entity.UserEntity;
+import com.springrest.rest.service.UserServiceImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -59,6 +65,22 @@ public class SecurityConfig {
 
     // return new InMemoryUserDetailsManager(admin, user);
     // }
+
+    @Bean
+    public CommandLineRunner initAdmin(UserServiceImpl userService, PasswordEncoder passwordEncoder) {
+        return args -> {
+            if (userService.findByUsername("admin").isEmpty()) {
+                UserEntity admin = new UserEntity();
+                admin.setUsername("admin");
+                admin.setPassword(passwordEncoder.encode("admin123")); // 🔒 Захищений пароль
+                admin.setRoles(Set.of("ADMIN", "USER"));
+                userService.saveUser(admin);
+                System.out.println("✅ Created default admin user (admin/admin123)");
+            } else {
+                System.out.println("ℹ️ Admin user already exists.");
+            }
+        };
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
