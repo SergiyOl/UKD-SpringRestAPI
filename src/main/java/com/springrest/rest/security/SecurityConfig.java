@@ -90,6 +90,7 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/home").permitAll()
+                        .requestMatchers("/userpage").authenticated()
                         .requestMatchers("/studentslist").hasRole("USER")
                         .requestMatchers("/form").hasRole("ADMIN")
                         .anyRequest().authenticated())
