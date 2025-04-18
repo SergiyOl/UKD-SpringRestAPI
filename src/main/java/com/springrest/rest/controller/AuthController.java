@@ -1,16 +1,28 @@
 package com.springrest.rest.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 // import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+// import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.springrest.rest.entity.UserEntity;
+import com.springrest.rest.exception.InvalidLoginException;
 import com.springrest.rest.security.SecurityConfig;
 import com.springrest.rest.service.UserServiceImpl;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import java.util.Optional;
 import java.util.Set;
@@ -18,7 +30,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@RestController
+@Controller
 public class AuthController {
     private final SecurityConfig securityConfig;
     private final UserServiceImpl userService;
@@ -31,25 +43,59 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @GetMapping("/login")
+    public String loginPage(Model model) {
+        return "login";
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody String username, String password) {
+    public String loginUser(
+            @RequestParam String username,
+            @RequestParam String password,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request) {
+
         logger.info("Received Login request (username: " + username + " ; password: " + password + " )");
 
         Optional<UserEntity> userOpt = userService.findByUsername(username);
-        logger.info(userOpt.toString());
 
         if (userOpt.isEmpty()) {
-            return ResponseEntity.status(401).body("User not found");
+            redirectAttributes.addFlashAttribute("error", "User not found");
+            return "redirect:/login";
         }
 
         UserEntity user = userOpt.get();
-        logger.info(user.toString());
 
         if (!securityConfig.passwordEncoder().matches(password, user.getPassword())) {
-            return ResponseEntity.status(401).body("Invalid password");
+            throw new InvalidLoginException("Invalid username or password");
         }
 
-        return ResponseEntity.ok("Login successful!");
+        // 🔐 Завантажуємо UserDetails через сервіс
+        UserDetails userDetails = userService.loadUserByUsername(username);
+
+        // ✅ Створюємо токен автентифікації
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null,
+                userDetails.getAuthorities());
+
+        // ⬇️ Встановлюємо в контекст безпеки
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        // 🗂️ Зберігаємо контекст в сесії, щоб він не зникав після редіректу
+        HttpSession session = request.getSession(true);
+        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+
+        logger.info("User " + username + " authenticated and session created.");
+
+        if (user.getRoles().contains("ADMIN")) {
+            return "redirect:/userpage";
+        } else {
+            return "redirect:/home";
+        }
+    }
+
+    @GetMapping("/register")
+    public String registerPage() {
+        return "register";
     }
 
     @PostMapping("/register")

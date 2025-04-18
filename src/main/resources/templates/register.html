@@ -9,13 +9,23 @@
 </head>
 
 <body>
-    <h1>Register</h1>
-    <form method="post" action="/register">
-        <label>Username: <input type="text" name="username"></label><br>
-        <label>Password: <input type="password" name="password"></label><br>
-        <button type="submit">Register</button>
-    </form>
-    <a href="/login">To login</a>
+    <div class="container mt-5">
+        <h1>Register</h1>
+        <form method="post" action="/register">
+            <div class="mb-3">
+                <label class="form-label">Username:</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password:</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <div class="d-flex">
+                <button type="submit" class="btn btn-primary">Register</button>
+                <a href="/login" class="btn btn-secondary ms-3">To login page</a>
+            </div>
+        </form>
+    </div>
 </body>
 
 </html>
