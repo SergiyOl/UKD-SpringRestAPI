@@ -66,21 +66,22 @@ public class SecurityConfig {
     // return new InMemoryUserDetailsManager(admin, user);
     // }
 
-    @Bean
-    public CommandLineRunner initAdmin(UserServiceImpl userService, PasswordEncoder passwordEncoder) {
-        return args -> {
-            if (userService.findByUsername("admin").isEmpty()) {
-                UserEntity admin = new UserEntity();
-                admin.setUsername("admin");
-                admin.setPassword(passwordEncoder.encode("admin123")); // 🔒 Захищений пароль
-                admin.setRoles(Set.of("ADMIN", "USER"));
-                userService.saveUser(admin);
-                System.out.println("✅ Created default admin user (admin/admin123)");
-            } else {
-                System.out.println("ℹ️ Admin user already exists.");
-            }
-        };
-    }
+    // @Bean
+    // public CommandLineRunner initAdmin(UserServiceImpl userService,
+    // PasswordEncoder passwordEncoder) {
+    // return args -> {
+    // if (userService.findByUsername("admin").isEmpty()) {
+    // UserEntity admin = new UserEntity();
+    // admin.setUsername("admin");
+    // admin.setPassword(passwordEncoder.encode("admin123")); // 🔒 Захищений пароль
+    // admin.setRoles(Set.of("ADMIN", "USER"));
+    // userService.saveUser(admin);
+    // System.out.println("✅ Created default admin user (admin/admin123)");
+    // } else {
+    // System.out.println("ℹ️ Admin user already exists.");
+    // }
+    // };
+    // }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
