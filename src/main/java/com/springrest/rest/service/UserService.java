@@ -1,11 +1,12 @@
 package com.springrest.rest.service;
 
+import com.springrest.rest.entity.UserEntity;
 import java.util.Optional;
 
-import com.springrest.rest.entity.UserEntity;
-
 public interface UserService {
-    Optional<UserEntity> findByUsername(String username);
+    Optional<UserEntity> readById(long id);
 
-    UserEntity saveUser(UserEntity user);
+    UserEntity findByEmail(String email);
+
+    UserEntity save(UserEntity user);
 }

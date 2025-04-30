@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.springrest.rest.entity.AuthResponse;
 import com.springrest.rest.entity.LoginRequest;
+import com.springrest.rest.entity.UserDetailsImpl;
 import com.springrest.rest.jwt.JwtUtils;
-import com.springrest.rest.service.UserDetailsImpl;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
@@ -28,10 +28,9 @@ public class Auth {
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
         try {
-            Authentication authentication = authenticationManager.authenticate(new
-
-            UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
+                            loginRequest.getPassword()));
             UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
             String jwtToken = jwtUtils.generateTokenFromUsername(user.getUsername());
             AuthResponse authResponse = new AuthResponse(user.getUsername(), jwtToken);
